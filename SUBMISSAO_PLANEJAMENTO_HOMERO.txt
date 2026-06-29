@@ -1,0 +1,48 @@
+# Texto para Submissão — Plataforma Homero
+# Tarefa: "Entrega do Primeiro Projeto: Protótipo WebAR Interativo"
+# Cole no campo de texto principal da plataforma
+
+---
+
+## Link do Netlify
+
+https://glistening-chimera-4d39be.netlify.app
+
+---
+
+## Descrição do Projeto
+
+**ShapeSense AR v3** é um protótipo WebAR desenvolvido com A-Frame 1.4.2 e AR.js, que utiliza o marcador Hiro para sobrepor um modelo anatômico 3D simulando próteses mamárias em realidade aumentada. O projeto mantém o princípio de processamento 100% local: câmera, rastreamento, renderização e cálculo de medidas ocorrem integralmente no dispositivo do usuário, sem envio de dados a servidores ou nuvem.
+
+## Modelo 3D
+
+O projeto foi desenvolvido com primitivas A-Frame (a-cylinder + a-sphere) que simulam um torso anatômico feminino estilizado, com rotação idle e destaque nas regiões de interesse. A estrutura de código está preparada para substituição por um arquivo .glb baixado do Sketchfab (modelo "Female Torso Anatomy", CC-BY, low poly), conforme documentado no README.
+
+## Interações implementadas
+
+**Interação 1 — Toque rápido (gesture-tap):**
+Ao tocar rapidamente na tela com o marcador visível, o componente gesture-detector emite o evento gesture-tap. O componente gesture-handler executa uma animação de bounce (escala +22% e retorno em 460ms) usando as propriedades animation__ nativas do A-Frame, enquanto o HUD exibe um anel de pulso (pulse-ring) e o halo teal ao redor do modelo inicia animação de pulsação via startEvents.
+
+**Interação 2 — Pressionar e segurar (mousedown/mouseup / hold):**
+Ao pressionar e manter o toque por mais de 500ms, o evento gesture-hold-start é emitido. O gesture-handler incrementa a propriedade scale do modelo a cada frame via requestAnimationFrame, até o limite máximo configurado (maxScale: 4). O HUD exibe uma barra de progresso rosa indicando o progresso do hold. Ao soltar, gesture-hold-end para o crescimento.
+
+## Checklist de qualidade
+
+- [x] Modelo 3D integrado e ajustado na cena
+- [x] Marcador Hiro rastreado pelo AR.js
+- [x] Interação 1: gesture-tap → animação de pulso (A-Frame animation__)
+- [x] Interação 2: hold → escala gradual (requestAnimationFrame)
+- [x] Feedback visual claro para ambas as interações (HUD + elementos 3D)
+- [x] Publicado no Netlify com link funcional
+- [x] Código-fonte entregue em .zip
+- [x] Funciona em dispositivo móvel (testado via Live Server + localhost)
+- [x] Câmera solicita permissão ao abrir
+- [x] Processamento 100% local (sem API, sem servidor)
+
+## Tecnologias utilizadas
+
+A-Frame 1.4.2, AR.js 3.x, JavaScript ES6+ (componentes AFRAME.registerComponent), WebGL, sessionStorage, CSS3 com design system ShapeSense (tokens de cor, tipografia DM Sans + Playfair Display).
+
+## Repositório GitHub
+
+https://github.com/Allanio007/shapesense-ar

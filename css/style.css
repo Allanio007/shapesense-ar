@@ -1,0 +1,214 @@
+/* ============================================================
+   SHAPESENSE AR v3 — STYLE.CSS
+   Design System: HUD sobre câmera AR
+   ============================================================ */
+
+:root {
+  --bg:      #0f0610;
+  --bg2:     #1a0d1e;
+  --bg3:     #240f2b;
+  --rose:    #e8709a;
+  --rose-lt: #f5b8d0;
+  --rose-dk: #b84070;
+  --gold:    #f0c040;
+  --teal:    #5cc8b0;
+  --text:    #f0e8f4;
+  --text2:   #c8aed8;
+  --text3:   #9070a0;
+  --border:  rgba(232,112,154,0.22);
+  --display: 'Playfair Display', Georgia, serif;
+  --body:    'DM Sans', system-ui, sans-serif;
+  --r-md:    12px;
+  --r-lg:    20px;
+  --ease:    0.22s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  overflow: hidden;
+  background: #000;
+  font-family: var(--body);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* a-scene ocupa tela toda */
+a-scene { position: fixed; inset: 0; }
+
+/* ── HUD (sobreposto) ────────────────────────────── */
+#hud {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+/* TOP BAR */
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15,6,16,0.78);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 10px 18px;
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+}
+
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-mark {
+  width: 28px; height: 28px;
+  background: var(--rose); color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 15px; font-weight: 700;
+}
+.logo-text { font-size: 15px; color: var(--text); }
+.logo-text strong { color: var(--rose); font-weight: 600; }
+.badge-ar {
+  font-size: 10px; font-weight: 700;
+  background: rgba(232,112,154,0.2);
+  border: 1px solid var(--rose);
+  color: var(--rose);
+  border-radius: 4px; padding: 1px 5px;
+  margin-left: 4px; vertical-align: middle;
+}
+.privacy-tag {
+  font-size: 12px; color: var(--teal);
+  background: rgba(92,200,176,0.12);
+  border: 1px solid rgba(92,200,176,0.3);
+  border-radius: var(--r-md); padding: 5px 12px;
+}
+
+/* HINT */
+.hud-hint {
+  text-align: center;
+  background: rgba(15,6,16,0.72);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 20px;
+  font-size: 14px; color: var(--text2);
+  max-width: 360px; margin: 0 auto;
+  backdrop-filter: blur(8px);
+  transition: background var(--ease);
+}
+.hud-hint.detected {
+  background: rgba(44,110,73,0.22);
+  border-color: rgba(92,200,176,0.4);
+  color: var(--teal);
+}
+
+/* BOTTOM BAR */
+.hud-bottom {
+  display: flex; gap: 10px;
+  pointer-events: auto;
+}
+
+.interact-card {
+  flex: 1;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(15,6,16,0.82);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: border-color var(--ease), background var(--ease);
+  user-select: none;
+}
+.interact-card:active,
+.interact-card.active {
+  border-color: var(--rose);
+  background: rgba(232,112,154,0.12);
+}
+
+.ic-icon { font-size: 22px; }
+.ic-label { font-size: 11px; color: var(--text2); line-height: 1.4; }
+.ic-label small { color: var(--text3); font-size: 10px; }
+
+/* PAINEL DE MEDIDAS */
+.meas-panel {
+  position: fixed;
+  top: 80px; right: 16px;
+  background: rgba(15,6,16,0.88);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+  backdrop-filter: blur(14px);
+  min-width: 200px;
+  pointer-events: none;
+  animation: slideIn 0.35s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.meas-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px; gap: 12px;
+}
+.meas-row:last-child { border-bottom: none; }
+.ml { color: var(--text3); }
+.mv { color: var(--rose-lt); font-weight: 600; }
+.mv.safe { color: var(--teal); }
+.safe-row { margin-top: 4px; }
+
+/* DISCLAIMER */
+.disclaimer {
+  text-align: center;
+  font-size: 10px; color: var(--text3);
+  background: rgba(15,6,16,0.6);
+  border-radius: 8px; padding: 5px 10px;
+  margin: 0 auto;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+/* FEEDBACK VISUAL DO PULSO */
+.pulse-ring {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px; height: 80px;
+  border: 3px solid var(--rose);
+  border-radius: 50%;
+  animation: pulseRing 0.6s ease-out forwards;
+  pointer-events: none;
+  z-index: 20;
+}
+@keyframes pulseRing {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+  to   { opacity: 0; transform: translate(-50%, -50%) scale(2.4); }
+}
+
+/* FEEDBACK HOLD */
+.hold-bar-wrap {
+  position: fixed;
+  bottom: 130px; left: 50%; transform: translateX(-50%);
+  width: 160px; height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px; overflow: hidden;
+  z-index: 20; display: none;
+}
+.hold-bar-fill {
+  height: 100%;
+  background: var(--rose);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.05s linear;
+}
+
+/* RESPONSIVO */
+@media (max-width: 480px) {
+  .ic-label { display: none; }
+  .interact-card { justify-content: center; }
+  .meas-panel { right: 8px; top: 70px; min-width: 160px; }
+}

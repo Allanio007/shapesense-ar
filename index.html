@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>ShapeSense AR — Simulação Anatômica</title>
+
+  <!-- ── FONTES ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet"/>
+
+  <!-- ── A-FRAME + AR.JS ── -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+  <!-- ── GESTURE LIBRARY (tap + hold) ── -->
+  <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HUD — interface ShapeSense sobre a câmera
+═══════════════════════════════════════════ -->
+<div id="hud">
+  <div class="hud-top">
+    <div class="logo">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">Shape<strong>Sense</strong> <span class="badge-ar">AR</span></span>
+    </div>
+    <div class="privacy-tag">🔒 100% local</div>
+  </div>
+
+  <div class="hud-hint" id="hint-box">
+    <span id="hint-text">📋 Aponte a câmera para o marcador <strong>Hiro</strong></span>
+  </div>
+
+  <div class="hud-bottom">
+    <div class="interact-card" id="card-tap">
+      <span class="ic-icon">👆</span>
+      <span class="ic-label">Toque rápido<br/><small>Animação de pulso</small></span>
+    </div>
+    <div class="interact-card" id="card-hold">
+      <span class="ic-icon">✊</span>
+      <span class="ic-label">Pressione e segure<br/><small>Amplia o modelo</small></span>
+    </div>
+    <div class="interact-card" id="card-info">
+      <span class="ic-icon">📊</span>
+      <span class="ic-label" id="vol-label">Volume<br/><small>— ml</small></span>
+    </div>
+  </div>
+
+  <!-- painel de medidas (aparece ao detectar marcador) -->
+  <div class="meas-panel" id="meas-panel" style="display:none;">
+    <div class="meas-row"><span class="ml">Base mamária</span><span class="mv" id="m-base">— cm</span></div>
+    <div class="meas-row"><span class="ml">Projeção</span><span class="mv" id="m-proj">— cm</span></div>
+    <div class="meas-row"><span class="ml">Distância intermamária</span><span class="mv" id="m-dist">— cm</span></div>
+    <div class="meas-row"><span class="ml">Ptose</span><span class="mv" id="m-ptose">—</span></div>
+    <div class="meas-row safe-row"><span class="ml">Faixa segura</span><span class="mv safe" id="m-vol">— ml</span></div>
+  </div>
+
+  <div class="disclaimer">⚕ Protótipo educacional · Residência em TIC 43 · Não substitui avaliação médica</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CENA A-FRAME + AR.JS
+═══════════════════════════════════════════ -->
+<a-scene
+  embedded
+  arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+  renderer="logarithmicDepthBuffer: true; antialias: true;"
+  vr-mode-ui="enabled: false"
+  loading-screen="enabled: false"
+  gesture-detector
+>
+
+  <!-- ── ASSETS ── -->
+  <a-assets>
+    <!--
+      MODELO 3D: Torso Anatômico Feminino
+      Fonte: Sketchfab — "Female Torso Anatomy" (CC-BY)
+      URL: https://sketchfab.com/3d-models/female-torso-anatomy-lowpoly
+      INSTRUÇÃO: Baixe o .glb e coloque em assets/modelo.glb
+      Enquanto o .glb não estiver local, usamos geometria primitiva A-Frame
+      como placeholder que simula a silhueta anatômica.
+    -->
+    <!-- <a-asset-item id="modelo-glb" src="assets/modelo.glb"></a-asset-item> -->
+  </a-assets>
+
+  <!-- ── MARCADOR HIRO ── -->
+  <a-marker
+    id="marcador"
+    preset="hiro"
+    raycaster="objects: .clicavel"
+    emitevents="true"
+    cursor="fuse: false; rayOrigin: mouse;"
+  >
+
+    <!-- ════════════════════════════════════
+         GRUPO PRINCIPAL — modelo 3D
+         (substituir a-entity primitiva pelo
+         <a-entity gltf-model="#modelo-glb">
+         ao ter o .glb em assets/)
+    ════════════════════════════════════ -->
+    <a-entity
+      id="corpo-group"
+      position="0 0.5 0"
+      rotation="-90 0 0"
+      scale="1 1 1"
+      class="clicavel"
+      animation__idle="property: rotation; from: -90 0 0; to: -90 360 0; dur: 12000; loop: true; easing: linear;"
+      gesture-handler="minScale: 0.3; maxScale: 4"
+    >
+
+      <!-- TORSO — silhueta anatômica simplificada com primitivas A-Frame -->
+      <!-- Ao ter o .glb: substitua tudo abaixo por -->
+      <!-- <a-entity gltf-model="#modelo-glb" scale="0.5 0.5 0.5" animation-mixer></a-entity> -->
+
+      <!-- tronco -->
+      <a-cylinder
+        color="#c8648a"
+        opacity="0.82"
+        radius="0.28" height="0.7"
+        position="0 0 0"
+        segments-radial="16"
+      ></a-cylinder>
+
+      <!-- ombros -->
+      <a-sphere color="#b84070" opacity="0.7" radius="0.14" position="-0.35 0.28 0"></a-sphere>
+      <a-sphere color="#b84070" opacity="0.7" radius="0.14" position=" 0.35 0.28 0"></a-sphere>
+
+      <!-- região peitoral esquerda (elipsoide) -->
+      <a-sphere
+        id="peito-esq"
+        color="#e8709a"
+        opacity="0.75"
+        radius="0.14"
+        position="-0.13 0.06 0.24"
+        scale="1.2 1 0.9"
+        class="clicavel"
+      ></a-sphere>
+
+      <!-- região peitoral direita -->
+      <a-sphere
+        id="peito-dir"
+        color="#e8709a"
+        opacity="0.75"
+        radius="0.14"
+        position=" 0.13 0.06 0.24"
+        scale="1.2 1 0.9"
+        class="clicavel"
+      ></a-sphere>
+
+      <!-- linhas de medição (planos finos) -->
+      <a-plane
+        color="#f0c040" opacity="0.55"
+        width="0.7" height="0.005"
+        position="0 0.06 0.24"
+        rotation="0 0 0"
+      ></a-plane>
+
+      <!-- label base -->
+      <a-text
+        id="label-base"
+        value="base: 12 cm"
+        color="#f0c040"
+        align="center"
+        position="0 -0.15 0.3"
+        scale="0.28 0.28 0.28"
+      ></a-text>
+
+      <!-- label dist -->
+      <a-text
+        id="label-dist"
+        value="dist: 3 cm"
+        color="#5cc8b0"
+        align="center"
+        position="0 0.22 0.3"
+        scale="0.24 0.24 0.24"
+      ></a-text>
+
+      <!-- halo de segurança (anel) -->
+      <a-torus
+        id="halo"
+        color="#5cc8b0"
+        radius="0.32" radius-tubular="0.006"
+        position="0 0.06 0"
+        rotation="90 0 0"
+        opacity="0.5"
+        animation__pulse="property: scale; from: 1 1 1; to: 1.08 1.08 1.08; dur: 900; loop: true; dir: alternate; easing: easeInOutSine; startEvents: startPulse; pauseEvents: stopPulse"
+      ></a-torus>
+
+    </a-entity>
+
+    <!-- LUZ AMBIENTE NA CENA -->
+    <a-light type="ambient" color="#ffffff" intensity="0.7"></a-light>
+    <a-light type="directional" color="#f5b8d0" intensity="0.5" position="1 2 1"></a-light>
+
+  </a-marker>
+
+  <!-- câmera -->
+  <a-entity camera></a-entity>
+
+</a-scene>
+
+<!-- ══ SCRIPTS ══ -->
+<script src="js/components.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
